@@ -1,7 +1,9 @@
 package br.usp.utils;
 
+import java.util.Random;
+
 public class RandomGenerator {
-    public static long random(int n) {
-        return Math.round(Math.random()) * n;
+    public static int random(int n) {
+        return new Random().nextInt(n);
     }
 }

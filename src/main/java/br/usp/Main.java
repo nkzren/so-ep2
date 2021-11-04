@@ -19,10 +19,28 @@ public class Main {
         LOGGER.info("Starting readers-writers");
 
         List<String> words = reader.readLines("bd.txt");
-        LOGGER.info(words.size());
+        LOGGER.info("Words read: " + words.size());
 
-        ThreadExecutor executor = new ThreadExecutor();
-        executor.start();
+        for (int i = 0; i < 101; i++) {
+            LOGGER.info("Starting with readers: " + (i));
+            long total = 0;
+//            for (int j = 0; j < 50; j++) {
+
+                ThreadExecutor executor = new ThreadExecutor(words, i);
+                try {
+                    executor.init();
+
+                    long start = System.currentTimeMillis();
+                    executor.start();
+                    long end = System.currentTimeMillis();
+                    long duration = end - start;
+                    total += duration;
+                } catch (InterruptedException e) {
+                    LOGGER.error(e);
+                }
+//            }
+            LOGGER.info("Average duration: " + (total) + "ms");
+        }
     }
 
     public static void main(String[] args) {
