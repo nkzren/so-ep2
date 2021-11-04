@@ -34,6 +34,7 @@ public class Main {
                     executor.start();
                     long end = System.currentTimeMillis();
                     long duration = end - start;
+                    LOGGER.info("Duration: " + duration + "ms");
                     total += duration;
                 } catch (InterruptedException e) {
                     LOGGER.error(e);

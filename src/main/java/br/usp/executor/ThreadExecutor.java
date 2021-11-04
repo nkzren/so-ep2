@@ -1,5 +1,6 @@
 package br.usp.executor;
 
+import br.usp.lock.ReaderWriterLock;
 import br.usp.utils.RandomGenerator;
 import org.apache.log4j.Logger;
 
@@ -16,10 +17,7 @@ public class ThreadExecutor {
     private final List<Thread> threads;
     private final List<String> words;
 
-    private final Semaphore readerSemaphore = new Semaphore(1);
-    private final Semaphore writerSemaphore = new Semaphore(1);
-    private int count = 0;
-
+    private final ReaderWriterLock lock = new ReaderWriterLock();
     /**
      * Atributo que determina a quantidade de readers
      */
@@ -45,21 +43,21 @@ public class ThreadExecutor {
     public void start() throws InterruptedException {
         for (Thread thread : this.threads) {
             thread.start();
+            thread.join();
         }
     }
 
     private void addReader() {
         this.threads.add(new Thread(() -> {
             try {
-                Thread.currentThread().join();
                 for (int j = 0; j < 100; j++) {
-                    readLock();
+                    lock.readLock();
                     int random = RandomGenerator.random(words.size() - 1);
                     String s = this.words.get(random);
 
                     // FIXME: Remover depois que estiver funcionando tudo
 //                    LOGGER.info("Reader: " + random + " " + s);
-                    readUnlock();
+                    lock.readUnlock();
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -70,16 +68,15 @@ public class ThreadExecutor {
     private void addWriter() {
         this.threads.add(new Thread(() -> {
             try {
-                Thread.currentThread().join();
                 for (int j = 0; j < 100; j++) {
-                    writeLock();
+                    lock.writeLock();
                     int random = RandomGenerator.random(words.size() - 1);
                     this.words.set(random, "MODIFICADO");
                     String s = this.words.get(random);
 
                     // FIXME: Remover logger depois que estiver funcionando tudo
 //                    LOGGER.info("Writer: " + random + " " + s);
-                    writeUnlock();
+                    lock.writeUnlock();
                 }
                 Thread.sleep(1);
             } catch (InterruptedException e) {
@@ -88,29 +85,4 @@ public class ThreadExecutor {
         }));
     }
 
-    private void readLock() throws InterruptedException {
-        readerSemaphore.acquire();
-        if (count == 0) {
-            writerSemaphore.acquire();
-        }
-        count++;
-        readerSemaphore.release();
-    }
-
-    private void readUnlock() throws InterruptedException {
-        readerSemaphore.acquire();
-        count--;
-        if (count == 0) {
-            writerSemaphore.release();
-        }
-        readerSemaphore.release();
-    }
-
-    private void writeLock() throws InterruptedException {
-        writerSemaphore.acquire();
-    }
-
-    private void writeUnlock() throws InterruptedException {
-        writerSemaphore.release();
-    }
 }
