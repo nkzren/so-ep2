@@ -1,5 +1,6 @@
 package br.usp;
 
+import br.usp.database.WordDatabase;
 import br.usp.executor.ThreadExecutor;
 import br.usp.utils.ResourcesReader;
 import org.apache.log4j.Logger;
@@ -18,15 +19,13 @@ public class Main {
     public void init() {
         LOGGER.info("Starting readers-writers");
 
-        List<String> words = reader.readLines("bd.txt");
-        LOGGER.info("Words read: " + words.size());
-
         for (int i = 0; i < 101; i++) {
+            WordDatabase database = new WordDatabase(reader.readLines("bd.txt"));
             LOGGER.info("Starting with readers: " + (i));
             long total = 0;
 //            for (int j = 0; j < 50; j++) {
 
-                ThreadExecutor executor = new ThreadExecutor(words, i);
+                ThreadExecutor executor = new ThreadExecutor(database, i);
                 try {
                     executor.init();
 
@@ -40,7 +39,7 @@ public class Main {
                     LOGGER.error(e);
                 }
 //            }
-            LOGGER.info("Average duration: " + (total) + "ms");
+//            LOGGER.info("Average duration: " + (total) + "ms");
         }
     }
 
