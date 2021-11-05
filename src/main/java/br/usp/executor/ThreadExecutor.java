@@ -2,7 +2,6 @@ package br.usp.executor;
 
 import br.usp.database.WordDatabase;
 import br.usp.lock.ReaderWriterLock;
-import br.usp.utils.RandomGenerator;
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
@@ -40,23 +39,32 @@ public class ThreadExecutor {
         Collections.shuffle(this.threads);
     }
 
-    public void start() throws InterruptedException {
+    public void start() {
         for (Thread thread : this.threads) {
             thread.start();
-            thread.join();
+        }
+
+        try {
+            for (Thread thread : this.threads) {
+                thread.join();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
     private void addReader() {
         this.threads.add(new Thread(() -> {
-            for (int j = 0; j < 100; j++) {
-                try {
-                    lock.readLock();
+            try {
+                lock.readLock();
+                LOGGER.debug(Thread.currentThread().getName() + " is reading");
+                for (int j = 0; j < 100; j++) {
                     database.read();
-                    lock.readUnlock();
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+                LOGGER.debug(Thread.currentThread().getName() + " finished reading");
+                lock.readUnlock();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }));
     }
@@ -64,12 +72,14 @@ public class ThreadExecutor {
     private void addWriter() {
         this.threads.add(new Thread(() -> {
             try {
+                lock.writeLock();
+                LOGGER.debug(Thread.currentThread().getName() + " is writing");
                 for (int j = 0; j < 100; j++) {
-                    lock.writeLock();
                     database.write();
-                    lock.writeUnlock();
                 }
-                Thread.sleep(1);
+                Thread.sleep(1, 0);
+                LOGGER.debug(Thread.currentThread().getName() + " finished writing");
+                lock.writeUnlock();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
