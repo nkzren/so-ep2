@@ -16,7 +16,7 @@ public class Main {
         this.reader = reader;
     }
 
-    public void init() {
+    public void initReadersWriters() {
         LOGGER.info("Starting readers-writers");
 
         for (int i = 0; i < 101; i++) {
@@ -32,6 +32,11 @@ public class Main {
         }
     }
 
+    /**
+     * @param database o db de palavras
+     * @param numReaders quantidade de readers a ser utilizada no executor
+     * @return a duracao da execucao
+     */
     private long runExecutor(WordDatabase database, int numReaders) {
         ThreadExecutor executor = new ThreadExecutor(database, numReaders);
         try {
@@ -52,6 +57,6 @@ public class Main {
     public static void main(String[] args) {
         Main main = new Main(new ResourcesReader());
 
-        main.init();
+        main.initReadersWriters();
     }
 }
