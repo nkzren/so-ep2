@@ -25,21 +25,27 @@ public class Main {
             long total = 0;
             for (int j = 0; j < NUM_ITERATIONS; j++) {
                 LOGGER.debug("Iteration number: " + j);
-                ThreadExecutor executor = new ThreadExecutor(database, i);
-                try {
-                    executor.init();
-
-                    long start = System.currentTimeMillis();
-                    executor.start();
-                    long end = System.currentTimeMillis();
-                    long duration = end - start;
-                    LOGGER.debug("Duration: " + duration + "ms");
-                    total += duration;
-                } catch (InterruptedException e) {
-                    LOGGER.error(e);
-                }
+                long duration = runExecutor(database, i);
+                total += duration;
             }
             LOGGER.info("Average duration: " + (total/NUM_ITERATIONS) + "ms");
+        }
+    }
+
+    private long runExecutor(WordDatabase database, int numReaders) {
+        ThreadExecutor executor = new ThreadExecutor(database, numReaders);
+        try {
+            executor.init();
+
+            long start = System.currentTimeMillis();
+            executor.start();
+            long end = System.currentTimeMillis();
+            long duration = end - start;
+            LOGGER.debug("Duration: " + duration + "ms");
+            return duration;
+        } catch (InterruptedException e) {
+            LOGGER.error(e);
+            return 0L;
         }
     }
 
