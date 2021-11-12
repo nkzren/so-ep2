@@ -1,6 +1,7 @@
 package br.usp.executor;
 
 import br.usp.database.WordDatabase;
+import br.usp.lock.Lock;
 import br.usp.lock.ReaderWriterLock;
 import org.apache.log4j.Logger;
 
@@ -15,17 +16,18 @@ public class ThreadExecutor {
 
     private final List<Thread> threads;
     private final WordDatabase database;
-    private final ReaderWriterLock lock = new ReaderWriterLock();
+    private final Lock lock;
 
     /**
      * Atributo que determina a quantidade de readers
      */
     private final int qtdReaders;
 
-    public ThreadExecutor(WordDatabase database, int qtdReaders) {
+    public ThreadExecutor(WordDatabase database, int qtdReaders, Lock lock) {
         this.threads = new LinkedList<>();
         this.database = database;
         this.qtdReaders = qtdReaders;
+        this.lock = lock;
     }
 
     public void init() throws InterruptedException {

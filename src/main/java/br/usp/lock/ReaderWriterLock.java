@@ -2,7 +2,7 @@ package br.usp.lock;
 
 import java.util.concurrent.Semaphore;
 
-public class ReaderWriterLock {
+public class ReaderWriterLock implements Lock {
     private final Semaphore readerSemaphore = new Semaphore(1);
     private final Semaphore writerSemaphore = new Semaphore(1);
     private int count = 0;

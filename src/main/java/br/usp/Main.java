@@ -2,6 +2,8 @@ package br.usp;
 
 import br.usp.database.WordDatabase;
 import br.usp.executor.ThreadExecutor;
+import br.usp.lock.ReaderWriterLock;
+import br.usp.lock.SimpleLock;
 import br.usp.utils.ResourcesReader;
 import org.apache.log4j.Logger;
 
@@ -38,7 +40,12 @@ public class Main {
      * @return a duracao da execucao
      */
     private long runExecutor(WordDatabase database, int numReaders) {
-        ThreadExecutor executor = new ThreadExecutor(database, numReaders);
+
+        // decomentar a linha de baixo para rodar: reader writer lock
+        // ThreadExecutor executor = new ThreadExecutor(database, numReaders, new ReaderWriterLock());
+
+        // decomentar a linha de baixo para rodar: simple lock
+        ThreadExecutor executor = new ThreadExecutor(database, numReaders, new SimpleLock());
         try {
             executor.init();
 

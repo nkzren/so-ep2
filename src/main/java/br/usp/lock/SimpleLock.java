@@ -2,14 +2,26 @@ package br.usp.lock;
 
 import java.util.concurrent.Semaphore;
 
-public class SimpleLock {
+public class SimpleLock implements Lock {
     private final Semaphore semaphore = new Semaphore(1);
 
-    public void lock() throws InterruptedException {
+    @Override
+    public void readLock() throws InterruptedException {
         semaphore.acquire();
     }
 
-    public void unlock() throws InterruptedException {
+    @Override
+    public void readUnlock() throws InterruptedException {
+        semaphore.release();
+    }
+
+    @Override
+    public void writeLock() throws InterruptedException {
+        semaphore.acquire();
+    }
+
+    @Override
+    public void writeUnlock() throws InterruptedException {
         semaphore.release();
     }
 }
