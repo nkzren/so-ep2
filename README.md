@@ -6,7 +6,7 @@ Repositório para o EP2 de Sistemas Operacionais, EACH-USP - 2021/2. O enunciado
 * JDK 11+ (testado na JDK 11 OpenJDK)
 
 ## Setup
-* Copie o arquivo `log4j.properties.sample` na pasta `src/main/resources` para um arquivo `log4j.properties.sample` na mesma pasta
+* Copie o arquivo `log4j.properties.sample` na pasta `src/main/resources` para um arquivo `log4j.properties` na mesma pasta
 
 ## Comandos
 
