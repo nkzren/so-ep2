@@ -63,6 +63,7 @@ public class ThreadExecutor {
                 for (int j = 0; j < 100; j++) {
                     database.read();
                 }
+                Thread.sleep(1, 0);
                 LOGGER.debug(Thread.currentThread().getName() + " finished reading");
                 lock.readUnlock();
             } catch (Exception e) {
